@@ -1,0 +1,27 @@
+﻿<!DOCTYPE html>
+<html lang="@L.Current">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - @L["AppName"]</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+<body>
+    <nav class="navbar navbar-expand navbar-dark bg-dark px-3">
+        <a class="navbar-brand" asp-controller="Dishes" asp-action="Index">@L["AppName"]</a>
+        <ul class="navbar-nav me-auto">
+            <li class="nav-item"><a class="nav-link" asp-controller="Dishes" asp-action="Index">@L["Dishes"]</a></li>
+            <li class="nav-item"><a class="nav-link" asp-controller="Categories" asp-action="Index">@L["Categories"]</a></li>
+        </ul>
+        <div>
+            <a class="text-white" asp-controller="Home" asp-action="SetLang" asp-route-lang="en">English</a>
+            <span class="text-white">|</span>
+            <a class="text-white" asp-controller="Home" asp-action="SetLang" asp-route-lang="vi">Tiếng Việt</a>
+        </div>
+    </nav>
+    <div class="container my-4">
+        @RenderBody()
+    </div>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

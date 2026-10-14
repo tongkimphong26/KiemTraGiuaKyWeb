@@ -1,0 +1,54 @@
+﻿@model Dish_BIT247667
+@{ ViewData["Title"] = L["DishDetails"]; }
+<h3>@Model.Name</h3>
+<p>
+    <b>@L["Category"]:</b> @Model.DishCategory?.Name<br />
+    <b>@L["Price"]:</b> @Model.Price.ToString("N0")<br />
+    <b>@L["Prep"]:</b> @Model.PreparationTime — @(Model.PreparationTime <= 15 ? L["Quick"] : L["Regular"])<br />
+    <b>@L["Status"]:</b> @(Model.IsAvailable ? L["Available"] : L["Unavailable"])<br />
+    <b>@L["Description"]:</b> @Model.Description
+</p>
+
+@if (TempData["Err"] != null)
+{
+    <div class="alert alert-danger">@TempData["Err"]</div>
+}
+
+<h5>@L["Images"]</h5>
+@if (!Model.Images.Any())
+{
+    <p class="text-muted">@L["NoImage"]</p>
+}
+@foreach (var i in Model.Images)
+{
+    <div class="d-inline-block m-2 text-center">
+        <img src="@i.ImageUrl" height="120" alt="" />
+        @if (i.IsThumbnail)
+        {
+            <div><span class="badge bg-primary">@L["Thumbnail"]</span></div>
+        }
+        else
+        {
+            <form method="post" asp-action="SetThumbnail">
+                <input type="hidden" name="imageId" value="@i.Id" />
+                <button class="btn btn-sm btn-outline-primary mt-1">@L["SetThumb"]</button>
+            </form>
+        }
+        <form method="post" asp-action="DeleteImage">
+            <input type="hidden" name="imageId" value="@i.Id" />
+            <button class="btn btn-sm btn-outline-danger mt-1">@L["Delete"]</button>
+        </form>
+    </div>
+}
+
+<form method="post" asp-action="AddImage" class="col-md-6 mt-3">
+    <input type="hidden" name="dishId" value="@Model.Id" />
+    <input name="imageUrl" placeholder="@L["ImageUrl"]" class="form-control mb-2" />
+    <div class="form-check mb-2">
+        <input type="checkbox" name="isThumbnail" value="true" class="form-check-input" />
+        <label class="form-check-label">@L["Thumbnail"]</label>
+    </div>
+    <button class="btn btn-primary">@L["AddImage"]</button>
+</form>
+
+<a class="btn btn-secondary mt-3" asp-action="Index">@L["Back"]</a>

@@ -1,0 +1,87 @@
+﻿@model List<Dish_BIT247667>
+@{
+    ViewData["Title"] = L["Dishes"];
+    string? q = ViewBag.Q;
+    string? status = ViewBag.Status;
+    string? sort = ViewBag.Sort;
+    decimal? minPrice = ViewBag.MinPrice;
+    decimal? maxPrice = ViewBag.MaxPrice;
+}
+<h3>@L["Dishes"]</h3>
+
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-danger">@ViewBag.Error</div>
+}
+
+<form method="get" class="row g-2 mb-3">
+    <div class="col-md-3"><input name="q" value="@q" placeholder="@L["Search"]" class="form-control" /></div>
+    <div class="col-md-2">
+        <select name="categoryId" asp-items="ViewBag.Categories" class="form-select">
+            <option value="">@L["Category"]: @L["All"]</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <select name="status" class="form-select">
+            <option value="">@L["Status"]: @L["All"]</option>
+            <option value="available" selected="@(status == "available")">@L["Available"]</option>
+            <option value="unavailable" selected="@(status == "unavailable")">@L["Unavailable"]</option>
+        </select>
+    </div>
+    <div class="col-md-2"><input name="minPrice" value="@minPrice" placeholder="@L["MinPrice"]" class="form-control" /></div>
+    <div class="col-md-2"><input name="maxPrice" value="@maxPrice" placeholder="@L["MaxPrice"]" class="form-control" /></div>
+    <div class="col-md-3">
+        <select name="sort" class="form-select">
+            <option value="">@L["Sort"]</option>
+            <option value="price_asc" selected="@(sort == "price_asc")">@L["PriceAsc"]</option>
+            <option value="price_desc" selected="@(sort == "price_desc")">@L["PriceDesc"]</option>
+            <option value="prep_asc" selected="@(sort == "prep_asc")">@L["PrepAsc"]</option>
+        </select>
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-primary">@L["Filter"]</button>
+        <a class="btn btn-outline-secondary" asp-action="Index">@L["Reset"]</a>
+    </div>
+</form>
+
+<a asp-action="Create" class="btn btn-success mb-3">@L["Create"]</a>
+
+@if (!Model.Any())
+{
+    <p class="text-muted">@L["NoResult"]</p>
+}
+else
+{
+    <table class="table table-striped align-middle">
+        <thead>
+            <tr>
+                <th></th><th>@L["Name"]</th><th>@L["Category"]</th><th>@L["Price"]</th>
+                <th>@L["Prep"]</th><th>@L["Status"]</th><th></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var d in Model)
+        {
+            var thumb = d.Images.FirstOrDefault(i => i.IsThumbnail) ?? d.Images.FirstOrDefault();
+            <tr>
+                <td>
+                    @if (thumb != null) { <img src="@thumb.ImageUrl" height="50" alt="" /> }
+                    else { <small class="text-muted">@L["NoImage"]</small> }
+                </td>
+                <td>@d.Name</td>
+                <td>@d.DishCategory?.Name</td>
+                <td>@d.Price.ToString("N0")</td>
+                <td>@d.PreparationTime — @(d.PreparationTime <= 15 ? L["Quick"] : L["Regular"])</td>
+                <td>
+                    @if (d.IsAvailable) { <span class="badge bg-success">@L["Available"]</span> }
+                    else { <span class="badge bg-secondary">@L["Unavailable"]</span> }
+                </td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@d.Id">@L["Details"]</a> |
+                    <a asp-action="Edit" asp-route-id="@d.Id">@L["Edit"]</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
